@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Try Slide Markdown</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+  
+  <script>
+  // ucs-2 string to base64 encoded ascii
+  function utoa(str) {
+    return window.btoa(unescape(encodeURIComponent(str)));
+  }
+  // base64 encoded ascii to ucs-2 string
+  function atou(str) {
+    return decodeURIComponent(escape(window.atob(str)));
+  }
+  var seg1 = null;
+  var seg2 = null;
+  var seg3 = null;
+  function apply(){
+    updatevariable();
+    var frame = document.getElementById("frame").contentWindow.document;
+    frame.body.innerHTML = '';
+    frame.write(buildSlide());    
+    var md = document.getElementById("markdown").value;
+    var cs = document.getElementById("css").value;
+    localStorage.setItem('try_markdown', md);
+    localStorage.setItem('try_css', cs);
+  }
+  
+  function updatevariable(){
+    if (seg1 == null) {
+      seg1 = atou(document.getElementById('seg1').value);
+    }
+    if (seg2 == null) {
+      seg2 = atou(document.getElementById('seg2').value);
+    }
+    if (seg3 == null) {
+      seg3 = atou(document.getElementById('seg3').value);
+    }
+  }
+  
+  function loadData(){
+    var data = localStorage.getItem("try_markdown");
+    if (data != null) {
+      document.getElementById('markdown').innerHTML = data;
+    }
+    data = localStorage.getItem("try_css");
+    if (data != null) {
+      document.getElementById('css').innerHTML = data;
+    }
+  }
+  function showCode(){
+    //var css = document.getElementById("css").value;
+    //document.getElementById('markdown').innerHTML = utoa(css);
+    //return;
+    document.getElementById('markdown').innerHTML = buildSlide();
+  }
+  function buildSlide(){
+    var markdown = document.getElementById("markdown").value;
+    var css = document.getElementById("css").value;
+    return seg1 + css + seg2 + markdown + seg3;
+  }
+  </script>
+</head>
+<body onload="loadData()">
+  <textarea id="seg1" style="display:none;">
+PCFET0NUWVBFIGh0bWw+CjxodG1sPgogIDxoZWFkPgogICAgPHRpdGxlPlJTQSBDcnlwdG9ncmFwaHk8L3RpdGxlPgogICAgPG1ldGEgaHR0cC1lcXVpdj0iQ29udGVudC1UeXBlIiBjb250ZW50PSJ0ZXh0L2h0bWw7IGNoYXJzZXQ9VVRGLTgiLz4KICAgIDxzdHlsZSB0eXBlPSJ0ZXh0L2NzcyI+Cg==
+  </textarea>
+  <textarea id="seg2" style="display:none;">
+CiAgICA8L3N0eWxlPgogIDwvaGVhZD4KICA8Ym9keT4KICAgIDx0ZXh0YXJlYSBpZD0ic291cmNlIj4K
+  </textarea>
+  <textarea id="seg3" style="display:none;">
+IAogICA8L3RleHRhcmVhPgogICAgPHNjcmlwdCBzcmM9Imh0dHBzOi8vYm1ob2FuZy5naXRodWIuaW8vc2xpZGVzL3JlbWFyay0wLjE0LjAubWluLmpzIiB0eXBlPSJ0ZXh0L2phdmFzY3JpcHQiPgogICAgPC9zY3JpcHQ+CiAgICA8c2NyaXB0IHR5cGU9InRleHQvamF2YXNjcmlwdCI+CiAgICAgIHZhciBzbGlkZXNob3cgPSByZW1hcmsuY3JlYXRlKCk7CiAgICA8L3NjcmlwdD4KICA8L2JvZHk+CjwvaHRtbD4=
+  </textarea>
+<div class="container-fluid" style="min-height: 100vh;">
+  <input type="button" onclick="apply()" class="button" value="Apply" />
+  <input type="button" onclick="showCode()" class="button" value="Show Code" />
+  <div class="row">
+    <div class="col-lg-4 col-md-4 col-sm-4 col-xs-4" style="padding:0px">
+      <textarea id="css" class="w-100" rows=7>@import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+      body { font-family: 'Tahoma'; color: #550000 }
+      h1, h2, h3 {
+        font-family: 'Tahoma';
+        font-weight: normal;
+      }
+      h1 {
+        color: #0066CC
+      }
+      h2, h3 {
+        color: #006688
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }</textarea>
+      <textarea id="markdown" class="w-100" rows=20>markdown</textarea>
+    </div>
+    <iframe id="frame" class="col-lg-8 col-md-8 col-sm-8 col-xs-8 m-0" />
+  </div>
+</div>
+
+</body>
+</html>
