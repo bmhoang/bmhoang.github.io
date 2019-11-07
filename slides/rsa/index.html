@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>RSA Cryptography</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <style type="text/css">
+@import url(https://fonts.googleapis.com/css?family=Ubuntu+Mono:400,700,400italic);
+      body { font-family: 'Tahoma'; color: #550000 }
+      img { max-height:550px;}
+      h1, h2, h3 {
+        font-family: 'Tahoma';
+        font-weight: normal;
+      }
+      h1 {
+        color: #0066CC
+      }
+      h2, h3 {
+        color: #006688
+      }
+      .remark-code, .remark-inline-code { font-family: 'Ubuntu Mono'; }
+    </style>
+  </head>
+  <body>
+    <textarea id="source">
+class: center, middle
+
+# RSA Cryptography
+Hoang Bui
+
+---
+
+# Agenda
+
+##1. Introduction
+##2. Theory & application
+##3. Digital signature & certificate
+##4. Cracking
+---
+
+# Introduction
+### - RSA (Rivest–Shamir–Adleman)
+Ron Rivest, Adi Shamir, and Leonard Adleman
+--
+
+### - Both the public and the private keys can encrypt a message
+---
+
+# Theory
+--
+
+## Modular arithmetic
+a ≡ b (mod n)
+
+**Example**:
+7 ≡ 1 (mod 3), 
+9 ≡ 4 (mod 5)
+--
+
+## Fermat's little theorem
+a<sup>p - 1</sup> ≡ 1 (mod p)
+
+_p is prime number, a < p_
+--
+
+## Group Theory
+a < m, (a,m) = 1 ⇒ exists b: ab ≡ 1 (mod m)
+---
+
+# Expressions
+a<sup>p - 1</sup> ≡ 1 (mod p)
+--
+
+
+a<sup>q - 1</sup> ≡ 1 (mod q)
+--
+
+
+⇒ a<sup>(p - 1)(q - 1)</sup> ≡ 1 (mod pq)
+--
+
+
+⇒ a<sup>s(p - 1)(q - 1)</sup> ≡ 1 (mod pq)
+--
+
+
+⇒ a<sup>s(p - 1)(q - 1) + 1</sup> ≡ a (mod pq)
+--
+
+
+s(p - 1)(q - 1) + 1 = ed, n = pq
+???
+a < m, (a,m) = 1 ⇒ exists b: ab ≡ 1 (mod m)
+--
+
+
+⇒ a<sup>ed</sup> ≡ a (mod n)
+--
+,
+(n, e): public key, (n, d): private key
+--
+, key size is size of n (bit count)
+--
+
+### Encrypt: b = a<sup>e</sup> mod n
+### Decrypt: a' = b<sup>d</sup> mod n
+---
+
+# Key generation
+public and private key generation (example for small number)
+--
+
+###1. Select two prime number p, q
+p = 11, q = 17
+--
+
+###2. Compute n = pq
+n = 11 x 17 = 187
+--
+
+###3. Compute ___least common multiple___ λ = lcm(p - 1, q - 1)
+lcm(10, 16) = 80
+---
+
+# Key generation
+###4. Select e is any number: 1 < e < λ that is coprime to λ
+1 < e < 80 ⇒ e = 7
+--
+
+###5. Compute d, the modular multiplicative inverse of e: ed ≡ 1 (mod λ)
+7 x 23 ≡ 1 mod 80 ⇒ d = 23
+--
+
+
+public key (n, e) = (187, 7); private key (n, d) = (187, 23)
+???
+```
+# Generate 1024 bit Private key
+$ openssl genrsa -out myprivate.pem 1024
+# Separate the public part from the Private key file.
+$ openssl rsa -in myprivate.pem -pubout > mypublic.pem
+# Display the contents of private key
+$ cat myprivate.pem
+```
+--
+
+
+n = 187 = 10111011b ⇒ key size is 8
+---
+
+#Encrypt - Decrypt
+public key (n, e) = (187, 7); private key (n, d) = (187, 23); message m = 3
+--
+
+###Encrypt
+c = m<sup>e</sup> mod n = 3<sup>7</sup> % 187 = 2187 % 187 = 130
+--
+
+###Decrypt
+m' = c<sup>d</sup> mod n = 130<sup>23</sup> % 187 = 4175390541341311636704579700000000000000000000000 % 187 = 3
+---
+
+PKCS #1 - Public Key Cryptography Standards #1 
+![pubPKCS1](pubPKCS1.png)
+---
+
+PKCS #1 - Public Key Cryptography Standards #1 
+![priPKCS1](priPKCS1.png)
+---
+
+# Application
+##- Authentication
+##- Secure transmission
+##- Digital certificate
+##- Digital signature
+---
+
+# Authentication
+[![ssh auth](ssh_0202.gif)](ssh_0202.gif)
+???
+- Server send a random number
+- Client use private key to encrypt and send to server
+- Server use public key to decrypt and compare with original number
+---
+
+# Secure transmission
+![Secure Transmission](RSA-algorithm-structure.png)
+???
+- Client send list of supported crypto and version
+- Server send selected crypto and version
+- Server send session key for selected crypto
+- Secure transmission start
+---
+
+# Digital certificate
+![certificate](ltcert-01.png)
+---
+
+Digital certificate
+![x509](x509.png)
+---
+
+# Digital signature
+![digital signature](eCCob.png)
+---
+
+# Cracking
+public key: (n, e)
+--
+
+##- Factoring n
+n ⇒ p, q
+--
+
+##- Compute λ = lcm(p-1, q-1)
+--
+
+##- Compute Private Key d
+de ≡ 1 (mod λ) ⇒ d
+--
+
+
+⇒ private key (n, d)
+???
+public key: (111036975342601848755221, 13)
+
+public key: (1234592592962967901296297037045679133590224789902207663928489902170626521926687, 5557)
+---
+class: center, middle
+# Thank you 
+   </textarea>
+    <script src="https://bmhoang.github.io/slides/remark-0.14.0.min.js" type="text/javascript">
+    </script>
+    <script type="text/javascript">
+      var slideshow = remark.create();
+    </script>
+  </body>
+</html>
