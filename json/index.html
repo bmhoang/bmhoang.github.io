@@ -1,0 +1,84 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
+  <link href="dist/jsoneditor.min.css" rel="stylesheet" type="text/css">
+  <script src="dist/jsoneditor.min.js"></script>
+  
+  <script src="filereader.js"></script>
+  <script src="FileSaver.min.js"></script>
+
+</head>
+<body>
+  <p>
+    Load: <input type="file" id="loadDocument" value="Load"/>
+  </p>
+  <p>
+    Save: <input type="button" id="saveDocument" value="Save" />
+  </p>
+
+  <div id="jsoneditor"></div>
+
+  <script>
+    // create the editor
+    const container = document.getElementById("jsoneditor")
+    const options = {
+      mode: 'tree',
+      modes: ['code','tree', 'view'],
+      onError: function (err) {
+        alert(err.toString())
+      },
+      onModeChange: function (newMode, oldMode) {
+        console.log('Mode switched from', oldMode, 'to', newMode)
+      }
+    }
+
+    const editor = new JSONEditor(container, options)
+
+    // set json
+    const initialJson = {
+      "Array": [1, 2, 3],
+      "Boolean": true,
+      "Null": null,
+      "Number": 123,
+      "Object": {"a": "b", "c": "d"},
+      "String": "Hello World"
+    }
+    editor.set(initialJson)
+
+    // get json
+    const updatedJson = editor.get()
+    
+    // Load a JSON document
+    FileReaderJS.setupInput(document.getElementById('loadDocument'), {
+      readAsDefault: 'Text',
+      on: {
+        load: function (event, file) {
+          editor.setText(event.target.result)
+        }
+      }
+    })
+
+    // Save a JSON document
+    document.getElementById('saveDocument').onclick = function () {
+      // Save Dialog
+      let fname = window.prompt("Save as...")
+
+      // Check json extension in file name
+      if (fname.indexOf(".") === -1) {
+        fname = fname + ".json"
+      } else {
+        if (fname.split('.').pop().toLowerCase() === "json") {
+          // Nothing to do
+        } else {
+          fname = fname.split('.')[0] + ".json"
+        }
+      }
+      const blob = new Blob([editor.getText()], {type: 'application/json;charset=utf-8'})
+      saveAs(blob, fname)
+    }
+
+  </script>
+</body>
+</html>
