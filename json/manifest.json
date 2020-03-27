@@ -1,0 +1,15 @@
+{
+  "background_color": "purple",
+  "description": "Hoang Bui json editor",
+  "display": "fullscreen",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ],
+  "name": "Json Editor",
+  "short_name": "JsonEditor",
+  "start_url": "/json/index.html"
+}

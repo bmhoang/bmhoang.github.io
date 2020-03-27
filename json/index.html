@@ -1,5 +1,5 @@
 <!DOCTYPE HTML>
-<html>
+<html class="h-100">
 <head>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
@@ -8,19 +8,37 @@
   
   <script src="filereader.js"></script>
   <script src="FileSaver.min.js"></script>
-
+  <link rel="stylesheet" href="bootstrap.min.css">
+  <script src="jquery.min.js"></script>
+  <script src="popper.min.js"></script>
+  <script src="bootstrap.min.js"></script>
+  <link rel="manifest" href="manifest.json">
 </head>
-<body>
-  <p>
-    Load: <input type="file" id="loadDocument" value="Load"/>
-  </p>
-  <p>
-    Save: <input type="button" id="saveDocument" value="Save" />
-  </p>
-
-  <div id="jsoneditor"></div>
-
+<body class="h-100">
+  <div class="d-flex flex-column h-100">
+    <div class="custom-file m-1">
+      <input type="file" class="custom-file-input" id="loadDocument">
+      <label class="custom-file-label" for="loadDocument">Open from Device</label>
+    </div>
+    <div class="m-1">
+      <!--button type="button" class="btn btn-outline-secondary" id="save">Save</button-->
+      <button type="button" class="btn btn-outline-secondary" id="saveDocument">Save to Device</button>
+      <button type="button" class="btn btn-outline-secondary" id="openFromBrowser">Open from Browser</button>
+      <button type="button" class="btn btn-outline-secondary" id="saveToBrowser">Save to Browser</button>
+    </div>
+    <div id="jsoneditor" class="m-1 flex-grow-1"></div>
+  </div>
   <script>
+  let mode = 1; // 1: no mode; 2: device; 3: browser
+  let filename = null;
+  // Add the following code if you want the name of the file appear on select
+$(".custom-file-input").on("change", function() {
+  var fileName = $(this).val().split("\\").pop();
+  $(this).siblings(".custom-file-label").addClass("selected").html(fileName);
+  filename = fileName;
+  mode = 2;
+});
+
     // create the editor
     const container = document.getElementById("jsoneditor")
     const options = {
@@ -35,17 +53,12 @@
     }
 
     const editor = new JSONEditor(container, options)
-
-    // set json
-    const initialJson = {
-      "Array": [1, 2, 3],
-      "Boolean": true,
-      "Null": null,
-      "Number": 123,
-      "Object": {"a": "b", "c": "d"},
-      "String": "Hello World"
+    function loadFromBrowser() {
+      let jsonText = localStorage.getItem("-----");
+      return jsonText === null ? "{}" : jsonText;
     }
-    editor.set(initialJson)
+    // set json
+    editor.setText(loadFromBrowser())
 
     // get json
     const updatedJson = editor.get()
@@ -55,15 +68,26 @@
       readAsDefault: 'Text',
       on: {
         load: function (event, file) {
-          editor.setText(event.target.result)
+          editor.setText(event.target.result);
         }
       }
     })
 
+    // Open a JSON document from browser
+    document.getElementById('openFromBrowser').onclick = function () {
+      editor.setText(loadFromBrowser());
+      mode = 3;
+    }
+
+    // Save a JSON document to browser
+    document.getElementById('saveToBrowser').onclick = function () {
+      localStorage.setItem("-----", editor.getText());
+    }
+    
     // Save a JSON document
     document.getElementById('saveDocument').onclick = function () {
       // Save Dialog
-      let fname = window.prompt("Save as...")
+      let fname = filename === null ? window.prompt("Save as...") : filename;
 
       // Check json extension in file name
       if (fname.indexOf(".") === -1) {
@@ -79,6 +103,13 @@
       saveAs(blob, fname)
     }
 
+
+// Register service worker to control making site work offline
+if('serviceWorker' in navigator) {
+  navigator.serviceWorker
+           .register('/json/sw.js')
+           .then(function() { console.log('Service Worker Registered'); });
+}
   </script>
 </body>
 </html>
