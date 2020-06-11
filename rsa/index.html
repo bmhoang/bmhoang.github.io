@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>JSEncrypt - Hoang Bui</title>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
   <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
   <!--script type="text/javascript" src="https://travistidwell.com/jsencrypt/bin/jsencrypt.js"></script-->
@@ -3606,7 +3605,7 @@ KJUR.asn1.ASN1Util = new function() {
  * This static method converts from hexadecimal string representation of
  * ASN.1 value of object identifier to oid number string.
  * @example
- * KJUR.asn1.ASN1Util.oidHexToInt('550406') &rarr; "2.5.4.6"
+ * KJUR.asn1.ASN1Util.oidHexToInt('550406') → "2.5.4.6"
  */
 KJUR.asn1.ASN1Util.oidHexToInt = function(hex) {
     var s = "";
@@ -3641,7 +3640,7 @@ KJUR.asn1.ASN1Util.oidHexToInt = function(hex) {
  * This static method converts from object identifier value string.
  * to hexadecimal string representation of it.
  * @example
- * KJUR.asn1.ASN1Util.oidIntToHex("2.5.4.6") &rarr; "550406"
+ * KJUR.asn1.ASN1Util.oidIntToHex("2.5.4.6") → "550406"
  */
 KJUR.asn1.ASN1Util.oidIntToHex = function(oidString) {
     var itox = function(i) {
@@ -4250,7 +4249,7 @@ KJUR.asn1.DERBitString = function(params) {
      * This static method may be useful to initialize boolean array.
      * @example
      * o = new KJUR.asn1.DERBitString();
-     * o.newFalseArray(3) &rarr; [false, false, false]
+     * o.newFalseArray(3) → [false, false, false]
      */
     this.newFalseArray = function(nLength) {
         var a = new Array(nLength);
@@ -5431,7 +5430,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
 <body>
 <div class="row">
   <div class="panel panel-default">
-    <div class="panel-heading"><h1>Online RSA Key Generator</h1></div>
+    <div class="panel-heading"><h1>&nbsp;Online RSA Key Generator</h1></div>
     <div class="panel-body">
       <div class="col-lg-2">
         <div class="btn-group">
@@ -5447,13 +5446,13 @@ Object.defineProperty(exports, '__esModule', { value: true });
             </ul>
           </div>
         </div>
-        <br>&nbsp;<br>
+        <br> <br>
         <button id="generate" class="btn btn-primary">Generate New Keys</button>
-        <br>&nbsp;<br>
+        <br> <br>
         <span><i><small id="time-report"></small></i></span>
-        <br>&nbsp;<br>
+        <br> <br>
         <label for="async-ck"><input id="async-ck" type="checkbox"> Async</label>
-        <br>&nbsp;<br>
+        <br> <br>
         <label for="keyinvert"><input id="keyinvert" type="checkbox"> Use private key to encrypt</label>
       </div>
       <div class="col-lg-10">
@@ -5466,7 +5465,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
           </div>
           <div class="col-lg-6">
             <label for="pubkey">Public Key</label><br/>
-            <small><textarea id="pubkey" rows="15" style="width:100%" readonly="readonly"></textarea></small>
+            <small><textarea id="pubkey" rows="15" style="width:100%"></textarea></small>
           </div>
         </div>
       </div>
@@ -5475,14 +5474,14 @@ Object.defineProperty(exports, '__esModule', { value: true });
 </div>
 <div class="row">
   <div class="panel panel-default">
-    <div class="panel-heading"><h3>RSA Encryption Test</h3></div>
+    <div class="panel-heading"><h3>&nbsp;RSA Encryption Test</h3></div>
     <div class="panel-body">
       <div class="col-lg-5">
         <label for="input">Text to encrypt:</label><br/>
         <textarea id="input" name="input" style="width: 100%" rows="4">This is a test!</textarea>
       </div>
       <div class="col-lg-2">
-        <label>&nbsp;</label><br/>
+        <label> </label><br/>
         <button id="execute" class="btn btn-primary">Encrypt / Decrypt</button>
       </div>
       <div class="col-lg-5">
