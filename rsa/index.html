@@ -5447,13 +5447,13 @@ Object.defineProperty(exports, '__esModule', { value: true });
             </ul>
           </div>
         </div>
-        <br> <br>
+        <br> <br>
         <button id="generate" class="btn btn-primary">Generate New Keys</button>
-        <br> <br>
+        <br> <br>
         <span><i><small id="time-report"></small></i></span>
-        <br> <br>
+        <br> <br>
         <label for="async-ck"><input id="async-ck" type="checkbox"> Async</label>
-        <br> <br>
+        <br> <br>
         <label for="keyinvert"><input id="keyinvert" type="checkbox"> Use private key to encrypt</label>
       </div>
       <div class="col-lg-10">
@@ -5482,7 +5482,7 @@ Object.defineProperty(exports, '__esModule', { value: true });
         <textarea id="input" name="input" style="width: 100%" rows="4">This is a test!</textarea>
       </div>
       <div class="col-lg-2">
-        <label> </label><br/>
+        <label> </label><br/>
         <button id="execute" class="btn btn-primary">Encrypt / Decrypt</button>
       </div>
       <div class="col-lg-5">
@@ -5514,11 +5514,14 @@ Object.defineProperty(exports, '__esModule', { value: true });
       // Create the encryption object.
       var crypt = new JSEncrypt();
 
-      // Set the private.
-      crypt.setPrivateKey($('#privkey').val());
-      //return;
-      // If no public key is set then set it here...
+      var privateKey = $('#privkey').val();
       var pubkey = $('#pubkey').val();
+      if (privateKey) {
+        crypt.setPrivateKey(privateKey);
+      } else if (pubkey) {
+        crypt.setPublicKey(pubkey);
+      }
+      
       if (!pubkey) {
         $('#pubkey').val(crypt.getPublicKey());
       }
