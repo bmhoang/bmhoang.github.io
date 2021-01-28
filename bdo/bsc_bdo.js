@@ -189,8 +189,9 @@ async function main() {
 }
 
 const getInputValue = (message, value, digit) => {
-	let input = prompt(message, value / (10 ** digit))
-	return value.sub(value).add(input * (10 ** digit))
+	return value
+	//let input = prompt(message, value / (10 ** digit))
+	//return value.sub(value).add(input * (10 ** digit))
 }
 const getTokenInfo = async (symbol) => {
     let raw = await fetch('https://api.bdollar.fi/api/bdollar/get-token-info?token=' + symbol)
