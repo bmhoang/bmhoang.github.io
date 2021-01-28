@@ -96,10 +96,10 @@ async function main() {
             return revoke(stakedToken, Contracts.BDOLLAR[key].address, App)
         }
         const stakeFunc = async function() {
-            return stake(STAKING_POOL, poolId,  prompt("Input value?", stakedTokenBalance), App)
+            return stake(STAKING_POOL, poolId, getInputValue("Input value?", stakedTokenBalance, decimal), App)
         }
         const unstakeFunc = async function() {
-            return unstake(STAKING_POOL, poolId, prompt("Input value?", userInfo.amount), App)
+            return unstake(STAKING_POOL, poolId, getInputValue("Input value?", userInfo.amount, decimal), App)
         }
 
         // DISPLAY POOL INFORMATION
@@ -156,10 +156,10 @@ async function main() {
         return revoke(sBDOContract, Contracts.BDOLLAR[boardRoomKey].address, App)
     }
     const stakeFunc = async function() {
-        return stakeBR(boardRoomContract,  prompt("Input value?", sBDOBalance), App)
+        return stakeBR(boardRoomContract,  getInputValue("Input value?", sBDOBalance, 18), App)
     }
     const unstakeFunc = async function() {
-        return unstakeBR(boardRoomContract,  prompt("Input value?", inBoardRoomBalance), App)
+        return unstakeBR(boardRoomContract,  getInputValue("Input value?", inRoomBalance, 18), App)
     }
 
     _print(`BOARD ROOM INFORMATION`)
@@ -188,6 +188,10 @@ async function main() {
     _print_link(`Exit`, exitBR)
 }
 
+const getInputValue = (message, value, digit) => {
+	let input = prompt(message, value / (10 ** digit))
+	return value.sub(value).add(input * (10 ** digit))
+}
 const getTokenInfo = async (symbol) => {
     let raw = await fetch('https://api.bdollar.fi/api/bdollar/get-token-info?token=' + symbol)
     return JSON.parse(await raw.text()).data
@@ -306,7 +310,7 @@ const unstakeBR = async (contract, amount, App) => {
         .then(function(t) {
             return App.provider.waitForTransaction(t.hash)
         })
-        .catch(function() {
+        .catch(function(e) {
             hideLoading();
         })
 }
