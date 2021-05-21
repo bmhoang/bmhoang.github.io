@@ -88,8 +88,8 @@ async function loadMidasChefContract(App, tokens, prices, chef, chefAddress, che
 
 
   _print("Finished reading smart contracts.\n");
-  const index=3;
-  for (i = index; i < poolCount + index; i++) {
+  const index=4;
+  for (i = index; i < 2 + index; i++) {
     if (poolPrices[i]) {
       printChefPool(App, chefAbi, chefAddress, prices, tokens, poolInfos[i], i, poolPrices[i],
         totalAllocPoints, rewardsPerWeek, rewardTokenTicker, rewardTokenAddress,
