@@ -47,7 +47,7 @@ async function main() {
   const prices = await getBscPrices();
 
   await loadMidasChefContract(App, tokens, prices, MIDAS_CHEF, MIDAS_CHEF_ADDR, MIDAS_CHEF_ABI, rewardMidasTokenTicker,
-    "mds", null, rewardsMidasPerWeek, "pendingShare", 3);
+    "mds", null, rewardsMidasPerWeek, "pendingShare", 6);
 
   let br = await loadBoardroom(App, prices, MIDAS_BOARDROOM_ADDR, MIDAS_BOARDROOM_ORACLE_ADDR, lptAddress, rewardTokenAddress, stakeTicker,
     rewardTicker, epochsPerDay, maxSupplyIncrease, decimals, ratio, targetMantissa)
@@ -88,8 +88,8 @@ async function loadMidasChefContract(App, tokens, prices, chef, chefAddress, che
 
 
   _print("Finished reading smart contracts.\n");
-  const index=4;
-  for (i = index; i < 2 + index; i++) {
+ 
+  for (i = 0; i < poolCount; i++) {
     if (poolPrices[i]) {
       printChefPool(App, chefAbi, chefAddress, prices, tokens, poolInfos[i], i, poolPrices[i],
         totalAllocPoints, rewardsPerWeek, rewardTokenTicker, rewardTokenAddress,
