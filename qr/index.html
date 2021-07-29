@@ -1,0 +1,43 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <script src='https://bmhoang.github.io/js/jquery.min.js'></script>
+    <script src="https://bmhoang.github.io/js/qrious.js"></script>
+    <link rel="stylesheet" href="https://bmhoang.github.io/js/bootstrap.min.css" />
+  </head>
+  <body>
+    <div class="container-fluid">
+      <div class="container mt-5" >
+        <form role="form" action="javascript:void();" method="POST">
+          <div class="form-group">
+            <textarea id="value" class="form-control" rows="5" placeholder="Text here!" name="content" autofocus required></textarea>
+          <div class="form-group">
+            <img class="mx-auto d-block" id='imgqr' src="" />
+          </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    <script>
+      var qr = new QRious({
+  background: 'white',
+  backgroundAlpha: 1,
+  foreground: 'black',
+  foregroundAlpha: 1,
+  level: 'H',
+  padding: 25,
+  size: 400,
+  value: document.getElementById('value').value
+});
+document.getElementById('imgqr').src=qr.toDataURL();
+      $('#value').bind('input propertychange', function() {
+      qr.set({
+  value: document.getElementById('value').value
+});
+document.getElementById('imgqr').src=qr.toDataURL();
+      });
+    </script>
+  </body>
+</html>
