@@ -1,0 +1,80 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+  <title>JSEncrypt - Hoang Bui</title>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+  <script src="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="https://travistidwell.com/jsencrypt/bin/jsencrypt.js"></script>
+  <link href="https://netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css" rel="stylesheet" type="text/css">
+</head>
+<body>
+<div class="row">
+  <div class="panel panel-default">
+    <div class="panel-heading"><h3> Encrypt your data</h3></div>
+    <div class="panel-body">
+      <div class="col-lg-5">
+        <label for="input">Text to encrypt:</label><br/>
+        <input id="input" name="input" type="password" style="width: 100%"/>
+      </div>
+      <div class="col-lg-2">
+        <label> </label><br/>
+        <button id="copy" class="btn btn-primary">Copy Encrypted data</button>
+      </div>
+      <div class="col-lg-5">
+        <label for="crypted">Encrypted:</label><br/>
+        <textarea id="crypted" name="crypted" style="width: 100%" rows="4"></textarea>
+      </div>
+    </div>
+  </div>
+</div>
+<div class="row">
+  <div class="panel panel-default">
+    <div class="panel-body">
+      <div class="col-lg-5">
+		<pre id="thekey"></pre>
+      </div>
+    </div>
+  </div>
+</div>
+<script type="text/javascript">
+const queryString = window.location.search;
+const urlParams = new URLSearchParams(queryString);
+const key = atob(urlParams.get('key'));
+document.getElementById('thekey').innerHTML=key;
+  $(function () {
+
+    $('#input').change(function(){
+  		const plain = $('#input').val();
+        
+        // Create the encryption object.
+        var crypt = new JSEncrypt();
+
+        crypt.setPublicKey(key);
+
+        // Get the input and crypted values.
+        var input = $('#input').val();
+        var crypted = $('#crypted').val();
+
+        $('#crypted').val(crypt.encrypt(plain));
+	});
+
+
+    $('#copy').click(function () {
+
+      // Get the text field
+      var copyText = document.getElementById("crypted");
+
+      // Select the text field
+      copyText.select();
+      copyText.setSelectionRange(0, 99999); // For mobile devices
+
+       // Copy the text inside the text field
+      navigator.clipboard.writeText(copyText.value);
+
+    });
+
+  });
+</script>
+</body>
+</html>
