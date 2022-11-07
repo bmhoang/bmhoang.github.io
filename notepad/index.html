@@ -1,0 +1,251 @@
+<html lang="en">
+
+<head>
+  <title>Notepad - Offline capable</title>
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#4d4d4d">
+  <meta name="description"
+    content="An offline capable notepad powered by ServiceWorker. It's quick, distraction-free, dark mode enabled, mobile compatible(Android, iOS) and minimalist in nature.">
+  <meta name="keywords" content="note,offline,mobile,web,notepad,android,ios,desktop" />
+  <meta name="author" content="Amit Merchant">
+  <meta name="application-name" content="Notepad" />
+  <meta name="google-site-verification" content="ulSTJh7j6NN54_KiZAJePCb_lYYbyvN28efzvScizHw" />
+  <link href="css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/style.css" rel="stylesheet">
+  <link rel="icon" href="favicon.ico">
+  <link rel="manifest" href="manifest.json">
+  <link rel="apple-touch-icon" href="img/notepad-apple-icon.png">
+  <link rel="mask-icon" href="img/icon-mask.svg" color="black">
+  <!-- for Facebook -->
+  <meta property="og:title" content="Notepad - Offline capable" />
+  <meta property="og:type" content="appliction" />
+  <meta property="og:image" content="https://notepad.js.org/img/thumbnail.png" />
+  <meta property="og:url" content="https://www.amitmerchant.com/notepad" />
+  <meta property="og:description"
+    content="An offline capable notepad powered by ServiceWorker. It's quick, distraction-free, dark mode enabled, mobile compatible(Android, iOS) and minimalist in nature." />
+  <!-- for Twitter -->
+  <meta property="twitter:card" content="summary_large_image" />
+  <meta property="twitter:title" content="Notepad - Offline capable" />
+  <meta property="twitter:image" content="https://notepad.js.org/img/thumbnail.png" />
+  <meta property="twitter:description"
+    content="An offline capable notepad powered by ServiceWorker. It's quick, distraction-free, dark mode enabled, mobile compatible(Android, iOS) and minimalist in nature." />
+</head>
+
+<body>
+  <nav class="navbar navbar-default navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <span>
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar"
+            aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+        </span>
+        <span><a class="navbar-brand app-heading" href="#">Notepad</a></span>
+        <span class="icon-container">
+          <span>
+            <a id="clearNotes" class="navbar-brand trash-icon" title="Delete Notes">
+              <img src="img/navbar/delete.svg" alt="Delete Icon" />
+            </a>
+          </span>
+          <span>
+            <a id="downloadNotes" class="navbar-brand download-icon" title="Download Notes [Ctrl/Cmd + S]">
+              <img src="img/navbar/download.svg" alt="Download Icon" />
+            </a>
+          </span>
+          <span>
+            <a href="javascript:void(0);" id="copyToClipboard" class="navbar-brand" title="Copy notes to clipboard">
+              <img src="img/navbar/copy.svg" alt="Copy Icon" />
+            </a>
+          </span>
+          <span title="Enable dark mode">
+            <a id="mode" class="navbar-brand">
+              <img
+                src="img/navbar/light-theme.svg"
+                alt="Light theme Icon"
+                id="themeIcon"
+              />
+            </a>
+          </span>
+          <span title="Preferences">
+            <a id="mode" class="navbar-brand preference-icon">
+              <img
+                src="img/navbar/preferences.svg"
+                alt="Preferences"
+                id="Preferences"
+                data-toggle="modal" data-target="#preferencesModal"
+              />
+            </a>
+          </span>
+        </span>  
+      </div>
+      <div id="navbar" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="#about" data-toggle="modal" data-target="#aboutModal">About</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container">
+    <div class="starter-template">
+      <textarea id="note" placeholder="Type your notes here and when you come back all your notes will be right here..."
+        autofocus></textarea>
+    </div>
+    <div class="word-count-container">
+      <p id="wordCount">0 chracter(s), 0 word(s)</p>
+    </div>
+    <div class="sticky-notice make-hidden">
+      <p>
+        Enjoy using this app? If yes, consider <a href="https://www.paypal.com/paypalme/AmitMerchant" target="_blank">donating</a> so that the experience remains ad-free! :)
+      </p>
+      <a href="javascript::void(0);" id="closeDonationPopup">
+        <svg width="25" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z" />
+        </svg>
+      </a>
+    </div>
+  </div>
+
+  <div id="aboutModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title custom-modal-title">Notepad - Offline capable</h4>
+          <span class="install-app-btn-container">
+            <a id="installApp" class="install-app-btn" href="javascript:void(0);">Install</a>
+          </span>
+        </div>
+        <div class="modal-body modal-container">
+          <p>Notepad is an offline-capable <a href="https://www.amitmerchant.com/Building-Simple-Offline-Notepad-Using-Service-Worker/" target="_blank">Progressive Web App</a>.</p>
+
+          <p>The app serves the following features:</p>
+
+          <ul>
+            <li>Write notes which are then saved to the browser's <a href="https://developer.mozilla.org/en-US/docs/Web/API/Window/localStorage" target="_blank">localStorage</a>.</li>
+            <li><a href="https://developer.mozilla.org/en-US/docs/Web/Progressive_web_apps/Developer_guide/Installing" target="_blank">Installable</a> on supported browsers for offline usage.</li>
+            <li>"Add To Home Screen" feature on Android-supported devices to launch the app from the home screen.</li>
+            <li>Dark mode.</li>
+            <li>Privacy-focused - We'll never collect your precious data.</li>
+            <li>Light-weight - Loads almost instantly.</li>
+            <li>It's <a href="https://github.com/amitmerchant1990/notepad" target="_blank">open-source</a>!</li>
+          </ul>
+          <link href="https://fonts.googleapis.com/css?family=Cookie" rel="stylesheet">
+          <p class="about-notice">If you liked using this app, consider a small <a href="https://www.paypal.com/paypalme/AmitMerchant"
+              target="_blank">donation</a> so that I keep working on improving it further and the experience remains ad-free. Icons from <a href="https://www.flaticon.com/" target="_blank">Flaticon</a>, <a href="https://www.svgrepo.com">SVGRepo</a> and <a href="https://iconduck.com" target="_blank">Iconduck</a>.</p>
+          <p style="text-align:center; margin-top: 10px;"><b>Made with ❤️ by <a href="https://www.amitmerchant.com/"
+                target="_blank">Amit Merchant</a></b></p>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div id="preferencesModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title custom-modal-title">Preferences</h4>
+        </div>
+        <div class="modal-body modal-container form-horizontal">
+          <div class="form-group">
+            <label class="control-label col-sm-4" for="fontSize">Font size</label>
+            <div class="col-sm-6 col-md-4">
+              <select name="fontSize" id="fontSize" class="form-control">
+                <option value="10">10</option>
+                <option value="12">12</option>
+                <option value="14">14</option>
+                <option value="16">16</option>
+                <option value="18">18</option>
+                <option value="20">20</option>
+                <option value="22">22</option>
+                <option value="24">24</option>
+                <option value="26">26</option>
+              </select> 
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-4" for="fontWeight">Font weight</label>
+            <div class="col-sm-6 col-md-4">
+              <select name="fontWeight" id="fontWeight" class="form-control">
+                <option value="normal">Normal</option>
+                <option value="bold">Bold</option>
+              </select> 
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-4" for="lineHeight">Line height</label>
+            <div class="col-sm-6 col-md-4">
+              <select name="lineHeight" id="lineHeight" class="form-control">
+                <option value="18">18</option>
+                <option value="20">20</option>
+                <option value="22">22</option>
+                <option value="24">24</option>
+                <option value="26">26</option>
+                <option value="28">28</option>
+                <option value="30">30</option>
+                <option value="32">32</option>
+              </select> 
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-4" for="showWordCountPill">Show character and word count</label>
+            <div class="col-sm-6 col-md-4">
+              <select name="showWordCountPill" id="showWordCountPill" class="form-control">
+                <option value="Yes">Yes</option>
+                <option value="No">No</option>
+              </select> 
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label class="control-label col-sm-4" for="company">&nbsp;</label>
+            <div class="col-sm-6 col-md-4">
+              <a href="javascript:void(0);" id="resetPreferences" title="Reset to default preferences">Reset preferences</a>
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-primary" data-dismiss="modal">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="toast"></div>
+
+  <script src="js/libraries/jquery.min.js"></script>
+  <script src="js/libraries/bootstrap.min.js"></script>
+  <script src="js/libraries/sweetalert2.all.min.js"></script>
+  <script src="js/utils.js"></script>
+  <script src="js/selector.js"></script>
+  <script src="js/app.js"></script>
+  
+  <!-- Global site tag (gtag.js) - Google Analytics - GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=UA-43339302-6"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'UA-43339302-6');
+  </script>
+</body>
+
+</html>
