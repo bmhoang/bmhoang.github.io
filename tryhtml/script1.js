@@ -45,4 +45,3 @@ function saveLocalStorageData(text) {
   console.log("Data:\n" + data);
   localStorage.setItem('@tryhtml', data);
 }
-S
