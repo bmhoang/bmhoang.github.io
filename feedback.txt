@@ -1,0 +1,49 @@
+PoojaAdake
+Good:
++ have unit test
+Bad:
+- no OO design
+- cannot handle cases "L 1 4 1 1", "R 4 4 1 1"
+- show unreadable character on canvas
+- Don't have source control for history tracking
+Overall: (5/10) mostly handle basic cases of challenge requirement, testing does not cover all scenarios / edge cases
+
+Mayur
+Good:
++ have OO design
++ have unit test (coverage 89% lines of code)
+Bad:
+- DrawLine missing test invalid coordinates
+- the implement of Bucket fill is not correct
+- Don't have source control for history tracking
+Overall: (5/10) code is poor, don't match all challenge requirements, no unit test, no source control
+
+Suleman
+Good:
+Bad:
+- don't have tests
+- code structure is not clean
+- no OO design
+- not text drawing (use graphic2d drawing, it is not satisfy the main challenge requirement - text drawing)
+- Don't have source control for history tracking
+Overall: (2/10) 90% of implementation is not match the requirement
+
+Jitendra Das
+Good:
++ Implementation works as requirement
++ have OO design
+Bad:
+- Don't have unit tests (There is a test class but no test inside it)
+- All commands features are implemented inside canvas. If we have 100 commands, the canvas class is heavy
+- Don't have source control for history tracking
+Overall: (6/10) the functionality is match the requirement, but code structure is hard to develop and maintain, dont have unit test and source control
+
+Snehprabha
+Good:
+Bad:
+- implementation of canvas is incorrect (use 'C 20 4' command but the created canvas is 18x2), so all commands does not work as requirement
+- don't handle coordinates out of the canvas
+- poor unit test
+- Don't have source control for history tracking
+- no OO design
+Overall: (2/10) cannot find the positive point
