@@ -11,45 +11,18 @@ font-family: Arial,Tahoma;
 #content {
 padding: 3px;
 padding-top: 1rem !important;
-background-color: gray;
-height: 96vh;
-min-height: 96vh;
-overflow: hidden;
 }
-#toolbar {
+.toolbar {
 padding-left: 10px;
-position: fixed;
 }
 </style>
-<script>
-var currentScroll = 0;
-var currentFont = 200;
-function scrollNext(a) {
-  let content = document.getElementById("content");
-  let tmp = currentScroll + a * (content.clientHeight - 30);
-  if (tmp < 0 || tmp > content.scrollHeight) {
-    return;
-  }
-  currentScroll = tmp;
-  content.scrollTo({top:currentScroll});
-}
-function fontChange(a) {
-  if (currentFont + a < 30) {
-    return;
-  }
-  currentFont += a;
-  document.getElementById('main').style.fontSize = currentFont + '%';
-  console.log(a);
-}
-</script>
 </head>
 <body id="main">
-<div id="toolbar">
-<button onclick="scrollNext(-1);">Up</button>
-<button onclick="scrollNext(+1);">Down</button>
-<button onclick="fontChange(-5);">-</button>
-<button onclick="fontChange(+5);">+</button>
-<a href="https://d1ergij2b6wmg5.cloudfront.net/kug/kindle_all_new_paperwhite_v2/v1/en-US/html/kug.html"> gogo</a>
+<div class="toolbar">
+<a href="/books/ncvdcnt/1">Previous</a>
+<a href="/books/ncvdcnt/3">Next</a>
+<input type="number" id="chapter" style="max-width: 200px;" />
+<button onclick="window.location='/books/ncvdcnt/'+document.getElementById('chapter').value;">Go</button>
 </div>
 <div id="content">
 	<p>
@@ -64,6 +37,13 @@ function fontChange(a) {
 	<p>
     Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget magna tortor, eget ullamcorper orci. Morbi vel odio et enim vestibulum varius. Praesent consequat porttitor augue, et vehicula mi venenatis eu. Curabitur dignissim dictum nulla in dignissim. Etiam et mauris nulla, at gravida augue. Donec quis nulla urna. Donec et diam eu arcu mollis blandit at a libero. Fusce iaculis, neque vitae hendrerit faucibus, odio orci euismod nisi, ut mattis lacus est ac dolor. Proin dictum pellentesque augue, ac lobortis tellus dignissim eget. Suspendisse nec nisl sapien, sit amet imperdiet lorem. Praesent vel lectus et risus mollis aliquet. Vestibulum ante ipsum primis in faucibus orci luctus et ultrices posuere cubilia Curae; Fusce nec imperdiet elit. Ut rhoncus purus id leo lobortis faucibus. Maecenas at nulla nibh, vitae vulputate magna. Ut id eleifend tortor. Ut mollis tortor at nisl blandit elementum iaculis metus placerat. <i>Cras sed risus erat. Cras tincidunt massa et tellus rutrum consequat.</i> Pellentesque imperdiet augue sit amet turpis porta quis volutpat tortor mattis. Nunc non arcu quis nisl faucibus tempor. Nullam fringilla nisl et dolor convallis et imperdiet nunc ornare. In dictum fringilla enim, sed ultricies dolor ultrices et. Vestibulum consectetur eleifend viverra. Phasellus tempor tristique erat pharetra viverra. Aliquam varius nulla id risus egestas quis interdum nisi dapibus. Phasellus porttitor, lectus a bibendum feugiat, mi tellus pulvinar augue, a tempor orci urna vitae sapien. Suspendisse ante elit, dictum ut sodales nec, dictum ac sem. Curabitur et porttitor tellus. Morbi dapibus elementum placerat. Sed dui nisl, condimentum non faucibus sed, commodo in sem. Suspendisse non ipsum turpis, et suscipit massa. <i>Proin varius ante quis urna sollicitudin sollicitudin.</i> Vestibulum lectus elit, sagittis sit amet tincidunt eu, rutrum sed urna. Praesent pellentesque mi quis est interdum in congue erat congue. Ut nec felis sed orci sagittis dapibus. Proin orci lorem, viverra non porttitor nec, euismod elementum nunc. Mauris non scelerisque velit. Suspendisse potenti. Cras iaculis dictum elit ut ullamcorper. Integer sed urna pharetra odio semper vulputate eu in elit. Phasellus mollis lectus non nisl rutrum molestie. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut eget magna tortor, eget ullamcorper orci. Morbi vel odio et enim vestibulum varius. Praesent consequat porttitor augue, et vehicula mi venenatis eu. Curabitur dignissim dictum nulla in dignissim. Etiam et mauris nulla, at gravida augue. Donec quis nulla urna. Donec et diam eu arcu mollis blandit at a libero. Fusce iaculis, neque vitae hendrerit faucibus, odio orci euismod nisi, ut mattis lacus est ac dolor.
     </p>
+</div>
+
+<div class="toolbar">
+<a href="/books/ncvdcnt/1">Previous</a>
+<a href="/books/ncvdcnt/3">Next</a>
+<input type="number" id="chapter" style="max-width: 200px;" />
+<button onclick="window.location='/books/ncvdcnt/'+document.getElementById('chapter').value;">Go</button>
 </div>
 </body>
 </html>
