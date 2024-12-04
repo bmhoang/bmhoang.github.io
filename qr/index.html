@@ -21,7 +21,10 @@
       </div>
     </div>
     <script>
-      var qr = new QRious({
+let params = (new URL(document.location)).searchParams;
+let text = params.get("t");
+document.getElementById('value').value = text;
+var qr = new QRious({
   background: 'white',
   backgroundAlpha: 1,
   foreground: 'black',
