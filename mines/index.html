@@ -30,6 +30,11 @@
             text-align: center;
             max-width: 100%;
             overflow: auto;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
         }
 
         .game-header {
@@ -140,6 +145,11 @@
             margin: 0 auto;
             touch-action: manipulation;
             overflow: visible;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
+            user-select: none;
+            -webkit-touch-callout: none;
         }
 
         .cell {
@@ -154,25 +164,76 @@
             align-items: center;
             justify-content: center;
             transition: all 0.1s ease;
+            -webkit-user-select: none;
+            -moz-user-select: none;
+            -ms-user-select: none;
             user-select: none;
+            -webkit-touch-callout: none;
+            -webkit-tap-highlight-color: transparent;
+            outline: none;
+        }
+
+        .cell:focus,
+        .cell:active,
+        .cell:focus-visible,
+        .cell:focus-within {
+            outline: none !important;
+        }
+
+        .cell:not(.revealed):not(.flagged):focus,
+        .cell:not(.revealed):not(.flagged):active,
+        .cell:not(.revealed):not(.flagged):focus-visible {
+            background: #c0c0c0 !important;
+        }
+
+        .cell.revealed:focus,
+        .cell.revealed:active,
+        .cell.revealed:focus-visible {
+            background: #e0e0e0 !important;
+        }
+
+        .cell.flagged:focus,
+        .cell.flagged:active,
+        .cell.flagged:focus-visible,
+        .cell.flagged:focus-within {
+            background: #ffeb3b !important;
+            color: #d32f2f !important;
+            outline: none !important;
         }
 
         .cell:hover {
             background: #d0d0d0;
         }
 
+        /* Disable hover on touch devices to prevent stuck hover states */
+        @media (hover: none) and (pointer: coarse) {
+            .cell:not(.flagged):not(.revealed):hover {
+                background: #c0c0c0 !important;
+            }
+            
+            .cell.revealed:hover {
+                background: #e0e0e0 !important;
+            }
+            
+            .cell.flagged:hover {
+                background: #ffeb3b !important;
+                color: #d32f2f !important;
+            }
+        }
+
         .cell.revealed {
-            background: #e0e0e0;
+            background: #e0e0e0 !important;
             cursor: default;
         }
 
         .cell.revealed:hover {
-            background: #e0e0e0;
+            background: #e0e0e0 !important;
         }
 
-        .cell.flagged {
-            background: #ffeb3b;
-            color: #d32f2f;
+        .cell.flagged,
+        .cell.flagged:not(.revealed) {
+            background: #ffeb3b !important;
+            color: #d32f2f !important;
         }
 
         .cell.mine {
@@ -297,7 +358,8 @@
             <strong>How to play:</strong><br>
             Left-click to reveal a cell • Right-click to flag/unflag a mine<br>
             <strong>Mobile:</strong> Tap to reveal • Hold for 0.5s to flag<br>
-            Numbers show how many mines are adjacent • Find all mines to win!
+            Numbers show how many mines are adjacent • Find all mines to win!<br>
+            <strong>First click is always safe!</strong> No mines will explode on your first move.
         </div>
     </div>
 
@@ -325,9 +387,12 @@
                 this.touchTimer = null;
                 this.isLongPress = false;
                 this.touchMoved = false;
+                this.longPressActionExecuted = false;
+                this.lastLongPressTime = 0;
                 this.touchStartX = 0;
                 this.touchStartY = 0;
                 this.longPressDelay = 500; // 500ms for long press
+                this.longPressCooldown = 200; // 200ms cooldown after long press
                 this.moveThreshold = 10; // pixels to consider as movement
                 
                 this.initializeEventListeners();
@@ -401,11 +466,15 @@
                     this.timer = null;
                 }
                 
-                // Clean up touch timer
+                // Clean up touch timer and reset touch state
                 if (this.touchTimer) {
                     clearTimeout(this.touchTimer);
                     this.touchTimer = null;
                 }
+                this.isLongPress = false;
+                this.touchMoved = false;
+                this.longPressActionExecuted = false;
+                this.lastLongPressTime = 0;
                 
                 const config = this.difficulties[this.currentDifficulty];
                 this.mineCount = config.mines;
@@ -470,6 +539,66 @@
                 return count;
             }
             
+            ensureFirstClickSafe(clickRow, clickCol) {
+                const config = this.difficulties[this.currentDifficulty];
+                const minesToRelocate = [];
+                
+                // Check the clicked cell and all its neighbors for mines
+                for (let r = clickRow - 1; r <= clickRow + 1; r++) {
+                    for (let c = clickCol - 1; c <= clickCol + 1; c++) {
+                        if (r >= 0 && r < config.rows && 
+                            c >= 0 && c < config.cols && 
+                            this.board[r][c].isMine) {
+                            // Mark this mine for relocation
+                            minesToRelocate.push({row: r, col: c});
+                            this.board[r][c].isMine = false;
+                        }
+                    }
+                }
+                
+                // Relocate mines to safe positions
+                for (let mineData of minesToRelocate) {
+                    this.relocateMine(clickRow, clickCol);
+                }
+                
+                // Recalculate adjacent mine counts for the entire board
+                this.recalculateAdjacentMines();
+            }
+            
+            relocateMine(avoidRow, avoidCol) {
+                const config = this.difficulties[this.currentDifficulty];
+                let placed = false;
+                let attempts = 0;
+                const maxAttempts = config.rows * config.cols;
+                
+                while (!placed && attempts < maxAttempts) {
+                    const newRow = Math.floor(Math.random() * config.rows);
+                    const newCol = Math.floor(Math.random() * config.cols);
+                    
+                    // Check if this position is safe (not in the avoid area and not already a mine)
+                    const inAvoidArea = Math.abs(newRow - avoidRow) <= 1 && Math.abs(newCol - avoidCol) <= 1;
+                    
+                    if (!inAvoidArea && !this.board[newRow][newCol].isMine) {
+                        this.board[newRow][newCol].isMine = true;
+                        placed = true;
+                    }
+                    
+                    attempts++;
+                }
+            }
+            
+            recalculateAdjacentMines() {
+                const config = this.difficulties[this.currentDifficulty];
+                
+                for (let r = 0; r < config.rows; r++) {
+                    for (let c = 0; c < config.cols; c++) {
+                        if (!this.board[r][c].isMine) {
+                            this.board[r][c].adjacentMines = this.countAdjacentMines(r, c);
+                        }
+                    }
+                }
+            }
+            
             renderBoard() {
                 const gameBoard = document.getElementById('game-board');
                 const config = this.difficulties[this.currentDifficulty];
@@ -484,6 +613,9 @@
                         cell.dataset.row = r;
                         cell.dataset.col = c;
                         
+                        // Make cell non-focusable
+                        cell.tabIndex = -1;
+                        
                         cell.addEventListener('click', (e) => this.handleCellClick(e, r, c));
                         cell.addEventListener('contextmenu', (e) => this.handleCellRightClick(e, r, c));
                         
@@ -491,6 +623,9 @@
                         cell.addEventListener('touchstart', (e) => this.handleTouchStart(e, r, c));
                         cell.addEventListener('touchend', (e) => this.handleTouchEnd(e, r, c));
                         cell.addEventListener('touchmove', (e) => this.handleTouchMove(e));
+                        
+                        // Prevent focus on mobile
+                        cell.addEventListener('focus', (e) => e.target.blur());
                         
                         gameBoard.appendChild(cell);
                     }
@@ -506,6 +641,8 @@
                 if (cell.isRevealed || cell.isFlagged) return;
                 
                 if (this.gameState === 'waiting') {
+                    // Ensure first click is safe
+                    this.ensureFirstClickSafe(row, col);
                     this.startGame();
                 }
                 
@@ -523,6 +660,8 @@
                 if (cell.isRevealed) return;
                 
                 if (this.gameState === 'waiting') {
+                    // Even if flagging first, ensure the area is safe for future clicks
+                    this.ensureFirstClickSafe(row, col);
                     this.startGame();
                 }
                 
@@ -532,6 +671,25 @@
                 this.updateCellDisplay(row, col);
                 this.updateDisplay();
                 this.checkGameEnd();
+                
+                // Ensure immediate visual update for flagged cells on mobile
+                const cellElement = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+                if (cellElement) {
+                    cellElement.blur();
+                    // Force immediate style recalculation only for flagged cells
+                    if (cell.isFlagged) {
+                        cellElement.style.background = '#ffeb3b';
+                        cellElement.style.color = '#d32f2f';
+                        setTimeout(() => {
+                            cellElement.style.removeProperty('background');
+                            cellElement.style.removeProperty('color');
+                        }, 10);
+                    } else {
+                        // For unflagged cells, ensure no inline styles interfere
+                        cellElement.style.removeProperty('background');
+                        cellElement.style.removeProperty('color');
+                    }
+                }
             }
             
             handleTouchStart(e, row, col) {
@@ -542,12 +700,15 @@
                 this.touchStartTime = Date.now();
                 this.isLongPress = false;
                 this.touchMoved = false;
+                this.longPressActionExecuted = false;
                 this.touchStartX = e.touches[0].clientX;
                 this.touchStartY = e.touches[0].clientY;
                 
                 // Start timer for long press detection
                 this.touchTimer = setTimeout(() => {
                     this.isLongPress = true;
+                    this.longPressActionExecuted = true;
+                    this.lastLongPressTime = Date.now();
                     // Trigger flag action on long press
                     if (!this.touchMoved) {
                         e.preventDefault(); // Only prevent default when we're flagging
@@ -561,20 +722,44 @@
             }
             
             handleTouchEnd(e, row, col) {
+                // Always prevent default if a long press action was executed
+                if (this.longPressActionExecuted) {
+                    e.preventDefault();
+                }
+                
                 if (this.touchTimer) {
                     clearTimeout(this.touchTimer);
                     this.touchTimer = null;
                 }
                 
-                // If it was a short tap and not a long press or scroll, treat as regular click
-                if (!this.isLongPress && !this.touchMoved) {
-                    e.preventDefault(); // Only prevent default when we're handling a tap
+                // Check if we're in cooldown period after a long press
+                const timeSinceLastLongPress = Date.now() - this.lastLongPressTime;
+                const inCooldownPeriod = timeSinceLastLongPress < this.longPressCooldown;
+                
+                // Only allow reveal if:
+                // 1. It was NOT a long press
+                // 2. User did NOT move their finger significantly  
+                // 3. NO long press action was executed during this touch sequence
+                // 4. We're NOT in the cooldown period after a recent long press
+                if (!this.isLongPress && !this.touchMoved && !this.longPressActionExecuted && !inCooldownPeriod) {
+                    e.preventDefault();
                     this.handleCellClick(e, row, col);
                 }
                 
+                // Remove focus from the cell and ensure proper styling
+                const cellElement = document.querySelector(`[data-row="${row}"][data-col="${col}"]`);
+                if (cellElement) {
+                    cellElement.blur();
+                    // Clear any inline styles that might interfere with CSS classes
+                    cellElement.style.removeProperty('background');
+                    cellElement.style.removeProperty('color');
+                }
+                
+                // Reset touch state (but keep lastLongPressTime for cooldown)
                 this.touchStartTime = 0;
                 this.isLongPress = false;
                 this.touchMoved = false;
+                this.longPressActionExecuted = false;
                 this.touchStartX = 0;
                 this.touchStartY = 0;
             }
@@ -589,6 +774,7 @@
                 // If movement exceeds threshold, consider it as intentional movement
                 if (deltaX > this.moveThreshold || deltaY > this.moveThreshold) {
                     this.touchMoved = true;
+                    this.longPressActionExecuted = false; // Reset since movement cancels action
                     // Cancel long press if finger moves significantly
                     if (this.touchTimer) {
                         clearTimeout(this.touchTimer);
@@ -632,6 +818,11 @@
                 
                 cellElement.className = 'cell';
                 cellElement.textContent = '';
+                
+                // Remove any inline styles to let CSS classes take control
+                cellElement.style.removeProperty('background');
+                cellElement.style.removeProperty('color');
+                cellElement.blur();
                 
                 if (cell.isFlagged) {
                     cellElement.classList.add('flagged');
